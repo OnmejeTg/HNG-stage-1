@@ -47,6 +47,7 @@ const isPerfectSquare = (number: number): boolean => {
 
 const calculateDigitSum = (number: number): number => {
   let sum = 0;
+  number = Math.abs(number);
   while (number > 0) {
     sum += number % 10;
     number = Math.floor(number / 10);
@@ -109,7 +110,6 @@ app.get(
     try {
       const numberParam = req.query.number as string;
 
-      // Validation remains the same as before
       if (!numberParam) {
         res.status(400).json({
           error: "Missing number parameter",
@@ -118,24 +118,23 @@ app.get(
         return;
       }
 
-      if (!/^\+?\d+$/.test(numberParam)) {
+      if (!/^\+?\-?\d+$/.test(numberParam)) {
         res.status(400).json({
-          error: "Invalid number format",
-          details:
-            "Number must be a positive integer without decimal points or special characters",
+          number: numberParam,
+          error: true,
         });
         return;
       }
 
       const number = parseInt(numberParam, 10);
 
-      if (number <= 0) {
-        res.status(400).json({
-          error: "Invalid number value",
-          details: "Number must be a positive integer greater than zero",
-        });
-        return;
-      }
+      //   if (number <= 0) {
+      //     res.status(400).json({
+      //       error: "Invalid number value",
+      //       details: "Number must be a positive integer greater than zero",
+      //     });
+      //     return;
+      //   }
 
       // Processing
       const funFact = await fetchRandomNumberFact(number);
