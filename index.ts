@@ -27,10 +27,10 @@ const fetchRandomNumberFact = async (number: number) => {
 };
 
 const isPrime = (num: number): boolean => {
-  if (num <= 1) return false; // 0 and 1 are not prime
-  if (num <= 3) return true; // 2 and 3 are prime
+  if (num <= 1) return false;
+  if (num <= 3) return true;
 
-  if (num % 2 === 0 || num % 3 === 0) return false; // Eliminate multiples of 2 and 3
+  if (num % 2 === 0 || num % 3 === 0) return false;
 
   for (let i = 5; i * i <= num; i += 6) {
     if (num % i === 0 || num % (i + 2) === 0) return false;
@@ -40,9 +40,9 @@ const isPrime = (num: number): boolean => {
 };
 
 const isPerfectSquare = (number: number): boolean => {
-  if (number < 0) return false; // Negative numbers are not perfect squares
+  if (number < 0) return false;
   const sqrt = Math.sqrt(number);
-  return sqrt === Math.floor(sqrt); // Check if sqrt is an integer
+  return sqrt === Math.floor(sqrt);
 };
 
 const calculateDigitSum = (number: number): number => {
@@ -76,34 +76,6 @@ const numProperties = (value: number): string[] => {
   return properties;
 };
 
-// app.get("/api/classify-number", async (req: Request, res: Response) => {
-//   try {
-//     const number = parseInt(req.query.number as string, 10);
-//     if (isNaN(number) || number <= 0) {
-//       res.status(400).json({
-//         number: "alphabet",
-//         error: true,
-//       });
-//     }
-//     const funFact = await fetchRandomNumberFact(number);
-//     const result: ResponseData = {
-//       number: number,
-//       is_prime: isPrime(number),
-//       is_perfect: isPerfectSquare(number),
-//       properties: numProperties(number),
-//       digit_sum: calculateDigitSum(number),
-//       fun_fact: funFact,
-//     };
-//     res.status(200).json(result);
-//   } catch (error) {
-//     console.error("Error-26:", error);
-//     res.status(500).json({
-//       error: "Failed to fetch number fact",
-//       details: error instanceof Error ? error.message : "Unknown error",
-//     });
-//   }
-// });
-
 app.get(
   "/api/classify-number",
   async (req: express.Request, res: express.Response) => {
@@ -128,15 +100,6 @@ app.get(
 
       const number = parseInt(numberParam, 10);
 
-      //   if (number <= 0) {
-      //     res.status(400).json({
-      //       error: "Invalid number value",
-      //       details: "Number must be a positive integer greater than zero",
-      //     });
-      //     return;
-      //   }
-
-      // Processing
       const funFact = await fetchRandomNumberFact(number);
       const result: ResponseData = {
         number: number,

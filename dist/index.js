@@ -27,11 +27,11 @@ const fetchRandomNumberFact = (number) => __awaiter(void 0, void 0, void 0, func
 });
 const isPrime = (num) => {
     if (num <= 1)
-        return false; // 0 and 1 are not prime
+        return false;
     if (num <= 3)
-        return true; // 2 and 3 are prime
+        return true;
     if (num % 2 === 0 || num % 3 === 0)
-        return false; // Eliminate multiples of 2 and 3
+        return false;
     for (let i = 5; i * i <= num; i += 6) {
         if (num % i === 0 || num % (i + 2) === 0)
             return false;
@@ -40,12 +40,13 @@ const isPrime = (num) => {
 };
 const isPerfectSquare = (number) => {
     if (number < 0)
-        return false; // Negative numbers are not perfect squares
+        return false;
     const sqrt = Math.sqrt(number);
-    return sqrt === Math.floor(sqrt); // Check if sqrt is an integer
+    return sqrt === Math.floor(sqrt);
 };
 const calculateDigitSum = (number) => {
     let sum = 0;
+    number = Math.abs(number);
     while (number > 0) {
         sum += number % 10;
         number = Math.floor(number / 10);
@@ -71,33 +72,6 @@ const numProperties = (value) => {
     }
     return properties;
 };
-// app.get("/api/classify-number", async (req: Request, res: Response) => {
-//   try {
-//     const number = parseInt(req.query.number as string, 10);
-//     if (isNaN(number) || number <= 0) {
-//       res.status(400).json({
-//         number: "alphabet",
-//         error: true,
-//       });
-//     }
-//     const funFact = await fetchRandomNumberFact(number);
-//     const result: ResponseData = {
-//       number: number,
-//       is_prime: isPrime(number),
-//       is_perfect: isPerfectSquare(number),
-//       properties: numProperties(number),
-//       digit_sum: calculateDigitSum(number),
-//       fun_fact: funFact,
-//     };
-//     res.status(200).json(result);
-//   } catch (error) {
-//     console.error("Error-26:", error);
-//     res.status(500).json({
-//       error: "Failed to fetch number fact",
-//       details: error instanceof Error ? error.message : "Unknown error",
-//     });
-//   }
-// });
 app.get("/api/classify-number", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const numberParam = req.query.number;
@@ -108,7 +82,7 @@ app.get("/api/classify-number", (req, res) => __awaiter(void 0, void 0, void 0, 
             });
             return;
         }
-        if (!/^\+?\d+$/.test(numberParam)) {
+        if (!/^\+?\-?\d+$/.test(numberParam)) {
             res.status(400).json({
                 number: numberParam,
                 error: true,
@@ -116,14 +90,6 @@ app.get("/api/classify-number", (req, res) => __awaiter(void 0, void 0, void 0, 
             return;
         }
         const number = parseInt(numberParam, 10);
-        //   if (number <= 0) {
-        //     res.status(400).json({
-        //       error: "Invalid number value",
-        //       details: "Number must be a positive integer greater than zero",
-        //     });
-        //     return;
-        //   }
-        // Processing
         const funFact = yield fetchRandomNumberFact(number);
         const result = {
             number: number,
