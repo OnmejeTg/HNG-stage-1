@@ -19,7 +19,7 @@ const PORT = 8000;
 const API_URL = "http://numbersapi.com";
 app.use((0, cors_1.default)());
 const fetchRandomNumberFact = (number) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(`${API_URL}/${number}`);
+    const response = yield fetch(`${API_URL}/${number}/math`);
     if (!response.ok) {
         throw new Error(`API request failed with status: ${response.status}`);
     }

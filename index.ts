@@ -18,7 +18,7 @@ interface ResponseData {
 }
 
 const fetchRandomNumberFact = async (number: number) => {
-  const response = await fetch(`${API_URL}/${number}`);
+  const response = await fetch(`${API_URL}/${number}/math`);
 
   if (!response.ok) {
     throw new Error(`API request failed with status: ${response.status}`);
