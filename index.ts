@@ -75,33 +75,89 @@ const numProperties = (value: number): string[] => {
   return properties;
 };
 
-app.get("/api/classify-number", async (req: Request, res: Response) => {
-  try {
-    const number = parseInt(req.query.number as string, 10);
-    if (isNaN(number) || number <= 0) {
-      res.status(400).json({
-        number: "alphabet",
-        error: true,
+// app.get("/api/classify-number", async (req: Request, res: Response) => {
+//   try {
+//     const number = parseInt(req.query.number as string, 10);
+//     if (isNaN(number) || number <= 0) {
+//       res.status(400).json({
+//         number: "alphabet",
+//         error: true,
+//       });
+//     }
+//     const funFact = await fetchRandomNumberFact(number);
+//     const result: ResponseData = {
+//       number: number,
+//       is_prime: isPrime(number),
+//       is_perfect: isPerfectSquare(number),
+//       properties: numProperties(number),
+//       digit_sum: calculateDigitSum(number),
+//       fun_fact: funFact,
+//     };
+//     res.status(200).json(result);
+//   } catch (error) {
+//     console.error("Error-26:", error);
+//     res.status(500).json({
+//       error: "Failed to fetch number fact",
+//       details: error instanceof Error ? error.message : "Unknown error",
+//     });
+//   }
+// });
+
+app.get(
+  "/api/classify-number",
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const numberParam = req.query.number as string;
+
+      // Validation remains the same as before
+      if (!numberParam) {
+        res.status(400).json({
+          error: "Missing number parameter",
+          details: "Please provide a 'number' query parameter",
+        });
+        return;
+      }
+
+      if (!/^\+?\d+$/.test(numberParam)) {
+        res.status(400).json({
+          error: "Invalid number format",
+          details:
+            "Number must be a positive integer without decimal points or special characters",
+        });
+        return;
+      }
+
+      const number = parseInt(numberParam, 10);
+
+      if (number <= 0) {
+        res.status(400).json({
+          error: "Invalid number value",
+          details: "Number must be a positive integer greater than zero",
+        });
+        return;
+      }
+
+      // Processing
+      const funFact = await fetchRandomNumberFact(number);
+      const result: ResponseData = {
+        number: number,
+        is_prime: isPrime(number),
+        is_perfect: isPerfectSquare(number),
+        properties: numProperties(number),
+        digit_sum: calculateDigitSum(number),
+        fun_fact: funFact,
+      };
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error processing request:", error);
+      res.status(500).json({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
-    const funFact = await fetchRandomNumberFact(number);
-    const result: ResponseData = {
-      number: number,
-      is_prime: isPrime(number),
-      is_perfect: isPerfectSquare(number),
-      properties: numProperties(number),
-      digit_sum: calculateDigitSum(number),
-      fun_fact: funFact,
-    };
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("Error-26:", error);
-    res.status(500).json({
-      error: "Failed to fetch number fact",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
   }
-});
+);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
