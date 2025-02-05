@@ -38,11 +38,19 @@ const isPrime = (num) => {
     }
     return true;
 };
-const isPerfectSquare = (number) => {
-    if (number < 0)
+const isPerfectSquare = (num) => {
+    if (num <= 1)
         return false;
-    const sqrt = Math.sqrt(number);
-    return sqrt === Math.floor(sqrt);
+    let sum = 1; // 1 is a proper divisor for all numbers >1
+    for (let i = 2; i <= Math.sqrt(num); i++) {
+        if (num % i === 0) {
+            sum += i;
+            const otherDivisor = num / i;
+            if (otherDivisor !== i)
+                sum += otherDivisor;
+        }
+    }
+    return sum === num;
 };
 const calculateDigitSum = (number) => {
     let sum = 0;
@@ -61,15 +69,9 @@ const isArmstrong = (num) => {
 };
 const numProperties = (value) => {
     let properties = [];
-    if (isArmstrong(value)) {
+    if (isArmstrong(value))
         properties.push("armstrong");
-    }
-    if (value % 2 === 0) {
-        properties.push("even");
-    }
-    else {
-        properties.push("odd");
-    }
+    properties.push(value % 2 === 0 ? "even" : "odd");
     return properties;
 };
 app.get("/api/classify-number", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -82,15 +84,26 @@ app.get("/api/classify-number", (req, res) => __awaiter(void 0, void 0, void 0, 
             });
             return;
         }
-        if (!/^\+?\-?\d+$/.test(numberParam)) {
+        // Ensure the numberParam consists only of digits and an optional leading + or -
+        if (!/^-?\d+$/.test(numberParam)) {
             res.status(400).json({
                 number: numberParam,
                 error: true,
             });
             return;
         }
-        const number = parseInt(numberParam, 10);
+        // Convert to integer and validate
+        const number = Number(numberParam);
+        if (isNaN(number)) {
+            res.status(400).json({
+                number: numberParam,
+                error: true,
+            });
+            return;
+        }
+        // Fetch fun fact
         const funFact = yield fetchRandomNumberFact(number);
+        // Construct response
         const result = {
             number: number,
             is_prime: isPrime(number),

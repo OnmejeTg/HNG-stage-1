@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { error } from "console";
 
 const app: Express = express();
 const PORT = 8000;
@@ -19,7 +18,6 @@ interface ResponseData {
 
 const fetchRandomNumberFact = async (number: number) => {
   const response = await fetch(`${API_URL}/${number}/math`);
-
   if (!response.ok) {
     throw new Error(`API request failed with status: ${response.status}`);
   }
@@ -29,20 +27,24 @@ const fetchRandomNumberFact = async (number: number) => {
 const isPrime = (num: number): boolean => {
   if (num <= 1) return false;
   if (num <= 3) return true;
-
   if (num % 2 === 0 || num % 3 === 0) return false;
-
   for (let i = 5; i * i <= num; i += 6) {
     if (num % i === 0 || num % (i + 2) === 0) return false;
   }
-
   return true;
 };
 
-const isPerfectSquare = (number: number): boolean => {
-  if (number < 0) return false;
-  const sqrt = Math.sqrt(number);
-  return sqrt === Math.floor(sqrt);
+const isPerfectSquare = (num: number): boolean => {
+  if (num <= 1) return false;
+  let sum = 1; // 1 is a proper divisor for all numbers >1
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) {
+      sum += i;
+      const otherDivisor = num / i;
+      if (otherDivisor !== i) sum += otherDivisor;
+    }
+  }
+  return sum === num;
 };
 
 const calculateDigitSum = (number: number): number => {
@@ -64,14 +66,8 @@ const isArmstrong = (num: number): boolean => {
 
 const numProperties = (value: number): string[] => {
   let properties: string[] = [];
-  if (isArmstrong(value)) {
-    properties.push("armstrong");
-  }
-  if (value % 2 === 0) {
-    properties.push("even");
-  } else {
-    properties.push("odd");
-  }
+  if (isArmstrong(value)) properties.push("armstrong");
+  properties.push(value % 2 === 0 ? "even" : "odd");
   return properties;
 };
 
@@ -89,7 +85,8 @@ app.get(
         return;
       }
 
-      if (!/^\+?\-?\d+$/.test(numberParam)) {
+      // Ensure the numberParam consists only of digits and an optional leading + or -
+      if (!/^-?\d+$/.test(numberParam)) {
         res.status(400).json({
           number: numberParam,
           error: true,
@@ -97,9 +94,20 @@ app.get(
         return;
       }
 
-      const number = parseInt(numberParam, 10);
+      // Convert to integer and validate
+      const number = Number(numberParam);
+      if (isNaN(number)) {
+        res.status(400).json({
+          number: numberParam,
+          error: true,
+        });
+        return;
+      }
 
+      // Fetch fun fact
       const funFact = await fetchRandomNumberFact(number);
+
+      // Construct response
       const result: ResponseData = {
         number: number,
         is_prime: isPrime(number),
