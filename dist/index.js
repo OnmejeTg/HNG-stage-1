@@ -61,14 +61,14 @@ const isArmstrong = (num) => {
 };
 const numProperties = (value) => {
     let properties = [];
+    if (isArmstrong(value)) {
+        properties.push("armstrong");
+    }
     if (value % 2 === 0) {
-        properties.push("Even");
+        properties.push("even");
     }
     else {
-        properties.push("Odd");
-    }
-    if (isArmstrong(value)) {
-        properties.push("Armstrong");
+        properties.push("odd");
     }
     return properties;
 };

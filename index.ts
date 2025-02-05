@@ -64,14 +64,13 @@ const isArmstrong = (num: number): boolean => {
 
 const numProperties = (value: number): string[] => {
   let properties: string[] = [];
-  if (value % 2 === 0) {
-    properties.push("Even");
-  } else {
-    properties.push("Odd");
-  }
-
   if (isArmstrong(value)) {
-    properties.push("Armstrong");
+    properties.push("armstrong");
+  }
+  if (value % 2 === 0) {
+    properties.push("even");
+  } else {
+    properties.push("odd");
   }
   return properties;
 };
